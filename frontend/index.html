@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Médico</title>
+  <!-- Importa Materialize CSS e Ícones Google -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-wrapper blue">
+      <a href="#" class="brand-logo center">Sistema Médico</a>
+    </div>
+  </nav>
+
+  <!-- Navegação com botões -->
+  <div id="nav-botoes" class="container">
+    <div class="row">
+      <div class="col s12">
+        <ul class="tabs">
+          <li id="btn-medicos" class="tab col s4"><a href="#doctors-section" onclick="showSection('doctors-section')">Médicos</a></li>
+          <li id="btn-pacientes" class="tab col s4"><a href="#patients-section" onclick="showSection('patients-section')">Pacientes</a></li>
+          <li id="btn-docs" class="tab col s4"><a href="#document-section" onclick="showSection('document-section')">Documentos</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Section -->
+  <div id="login-section" class="container">
+    <h4 class="center-align">Login</h4>
+    <div class="input-field">
+      <input type="email" id="email" required>
+      <label for="email">Email</label>
+    </div>
+    <div class="input-field">
+      <input type="password" id="password" required>
+      <label for="password">Senha</label>
+    </div>
+    <button class="btn blue waves-effect waves-light" onclick="login()">Entrar</button>
+    <p id="login-error" class="red-text"></p>
+  </div>
+
+  <!-- Doctors List for Patients -->
+  <section id="doctors-section" class="container section" style="display: none;">
+    <h5>Médicos Vinculados</h5>
+    <ul id="doctors-list" class="collection"></ul>
+  </section>
+
+  <!-- Patients List for Doctors -->
+  <section id="patients-section" class="container section" style="display: none;">
+    <h5>Pacientes</h5>
+    <ul id="patients-list" class="collection"></ul>
+  </section>
+
+  <!-- Document Upload Section for Doctors or Document View for Patients -->
+  <section id="document-section" class="container section" style="display: none;">
+    <h5>Documentos do Paciente</h5>
+    <div class="file-field input-field">
+      <div class="btn blue">
+        <span>Escolher arquivo</span>
+        <input type="file" id="file-upload">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text">
+      </div>
+    </div>
+    <button class="btn blue waves-effect waves-light" onclick="uploadDocument()">Enviar Documento</button>
+    <ul id="document-list" class="collection"></ul>
+  </section>
+
+  <!-- Chat Section -->
+  <div id="chat-section" class="container section" style="display: none;">
+    <h5>Chat</h5>
+    <div id="chat-window" class="card-panel grey lighten-4" style="height: 300px; overflow-y: scroll;"></div>
+    <div class="input-field">
+      <input type="text" id="chat-message" placeholder="Escreva uma mensagem">
+      <button class="btn-floating btn-large blue" onclick="sendMessage()">
+        <i class="material-icons">send</i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Botão Flutuante para abrir o chat -->
+  <div id="chat-btn" class="fixed-action-btn">
+    <a class="btn-floating btn-large red" onclick="toggleChat()">
+      <i class="large material-icons">chat</i>
+    </a>
+  </div>
+
+  <!-- Importa Materialize JavaScript, jQuery e Socket.io -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
