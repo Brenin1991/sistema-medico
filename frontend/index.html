@@ -1,85 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema Médico</title>
-  <!-- Importa Materialize CSS e Ícones Google -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Médico</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
   <!-- Navbar -->
   <nav>
     <div class="nav-wrapper blue">
       <a href="#" class="brand-logo center">Sistema Médico</a>
     </div>
   </nav>
-
   <!-- Navegação com botões -->
-  <div id="nav-botoes" class="container">
+  <div id="nav-botoes">
     <div class="row">
-      <div class="col s12">
-        <ul class="tabs">
-          <li id="btn-medicos" class="tab col s4"><a href="#doctors-section" onclick="showSection('doctors-section')">Médicos</a></li>
-          <li id="btn-pacientes" class="tab col s4"><a href="#patients-section" onclick="showSection('patients-section')">Pacientes</a></li>
-          <li id="btn-docs" class="tab col s4"><a href="#document-section" onclick="showSection('document-section')">Documentos</a></li>
+      <div>
+        <ul>
+          <li id="btn-medicos">
+            <a href="#doctors-section" onclick="showSection('doctors-section')">Médicos</a>
+          </li>
+          <li id="btn-pacientes" <a href="#patients-section" onclick="showSection('patients-section')">Pacientes</a>
+          </li>
+          <li id="btn-docs">
+            <a href="#document-section" onclick="showSection('document-section')">Documentos</a>
+          </li>
         </ul>
       </div>
     </div>
   </div>
 
   <!-- Login Section -->
-  <div id="login-section" class="container">
-    <h4 class="center-align">Login</h4>
-    <div class="input-field">
-      <input type="email" id="email" required>
-      <label for="email">Email</label>
+  <div id="login-section" class="container page">
+    <div class="card-custom">
+      <h4 class="center-align">Login</h4>
+      <div class="input-field">
+        <input type="email" id="email" required />
+        <label for="email">Email</label>
+      </div>
+      <div class="input-field">
+        <input type="password" id="password" required />
+        <label for="password">Senha</label>
+      </div>
+      <button class="btn blue waves-effect waves-light" onclick="login()">
+        Entrar
+      </button>
+      <p id="login-error" class="red-text"></p>
+      <button class="btn green waves-effect waves-light" onclick="showRegister()">
+        Não possui uma conta? Cadastre-se
+      </button>
     </div>
-    <div class="input-field">
-      <input type="password" id="password" required>
-      <label for="password">Senha</label>
-    </div>
-    <button class="btn blue waves-effect waves-light" onclick="login()">Entrar</button>
-    <p id="login-error" class="red-text"></p>
   </div>
 
-  <!-- Doctors List for Patients -->
-  <section id="doctors-section" class="container section" style="display: none;">
-    <h5>Médicos Vinculados</h5>
-    <ul id="doctors-list" class="collection"></ul>
-  </section>
-
-  <!-- Patients List for Doctors -->
-  <section id="patients-section" class="container section" style="display: none;">
-    <h5>Pacientes</h5>
-    <ul id="patients-list" class="collection"></ul>
-  </section>
-
-  <!-- Document Upload Section for Doctors or Document View for Patients -->
-  <section id="document-section" class="container section" style="display: none;">
-    <h5>Documentos do Paciente</h5>
-    <div class="file-field input-field">
-      <div class="btn blue">
-        <span>Escolher arquivo</span>
-        <input type="file" id="file-upload">
+  <div id="register-section" class="container page" style="display: none">
+    <div class="card-custom">
+      <h4 class="center-align">Registro</h4>
+      <div class="input-field">
+        <input type="text" id="register-name" required />
+        <label for="register-name">Nome</label>
       </div>
-      <div class="file-path-wrapper">
-        <input class="file-path validate" type="text">
+      <div class="input-field">
+        <input type="email" id="register-email" required />
+        <label for="register-email">Email</label>
       </div>
+      <div class="input-field">
+        <input type="password" id="register-password" required />
+        <label for="register-password">Senha</label>
+      </div>
+      <div class="input-field">
+        <select id="register-role" required>
+          <option value="" disabled selected>Escolha o papel</option>
+          <option value="doctor">Médico</option>
+          <option value="patient">Paciente</option>
+        </select>
+        <label for="register-role">Papel</label>
+      </div>
+      <button class="btn blue waves-effect waves-light" onclick="register()">
+        Registrar
+      </button>
+      <p id="register-error" class="red-text"></p>
+      <p id="register-success" class="green-text"></p>
+
+      <button class="btn blue waves-effect waves-light" onclick="showLogin()">
+        Já possi uma conta? Entre
+      </button>
     </div>
-    <button class="btn blue waves-effect waves-light" onclick="uploadDocument()">Enviar Documento</button>
-    <ul id="document-list" class="collection"></ul>
-  </section>
+  </div>
 
+  <div id="dashboard">
+    <div class="tab">
+      <section id="doctors-section" class="container section" style="display: none">
+        <h5>Médicos Vinculados</h5>
+        <ul id="doctors-list" class="collection"></ul>
+      </section>
+
+      <!-- Patients List for Doctors -->
+      <section id="patients-section" class="container section" style="display: none">
+        <h5>Pacientes</h5>
+        <ul id="patients-list" class="collection"></ul>
+      </section>
+    </div>
+    <!-- Doctors List for Patients -->
+    <div class="doc-body">
+      <!-- Document Upload Section for Doctors or Document View for Patients -->
+      <section id="document-section" class="container section" style="display: none">
+        <h5>Documentos do Paciente</h5>
+        <div class="file-field input-field">
+          <div class="btn blue">
+            <span>Escolher arquivo</span>
+            <input type="file" id="file-upload" />
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" />
+          </div>
+        </div>
+        <button class="btn blue waves-effect waves-light" onclick="uploadDocument()">
+          Enviar Documento
+        </button>
+      </section>
+      <section>
+        <ul id="document-list" class="collection">
+          <!-- Item de lista para o botão de upload -->
+          <li class="collection-item upload-button">
+            <button class="btn blue waves-effect waves-light" onclick="uploadDeArquivo()">
+              Enviar Novo Documento
+            </button>
+          </li>
+        </ul>
+        
+      </section>
+    </div>
+  </div>
   <!-- Chat Section -->
-  <div id="chat-section" class="container section" style="display: none;">
+  <div id="chat-section" class="container section" style="display: none">
     <h5>Chat</h5>
-    <div id="chat-window" class="card-panel grey lighten-4" style="height: 300px; overflow-y: scroll;"></div>
+    <div id="chat-window" class="card-panel grey lighten-4" style="height: 300px; overflow-y: scroll"></div>
     <div class="input-field">
-      <input type="text" id="chat-message" placeholder="Escreva uma mensagem">
+      <input type="text" id="chat-message" placeholder="Escreva uma mensagem" />
       <button class="btn-floating btn-large blue" onclick="sendMessage()">
         <i class="material-icons">send</i>
       </button>
@@ -92,10 +152,6 @@
       <i class="large material-icons">chat</i>
     </a>
   </div>
-
-  <!-- Importa Materialize JavaScript, jQuery e Socket.io -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script src="script.js"></script>
 </body>

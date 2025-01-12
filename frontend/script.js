@@ -50,6 +50,51 @@ async function login() {
       console.error('Erro ao fazer login:', error);
     }
   }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Inicializa o seletor de papel do usuário
+    const elems = document.querySelectorAll('select');
+    M.FormSelect.init(elems);
+  });
+  
+  async function register() {
+    const name = document.getElementById('register-name').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const role = document.getElementById('register-role').value;
+  
+    const errorElement = document.getElementById('register-error');
+    const successElement = document.getElementById('register-success');
+    errorElement.textContent = '';
+    successElement.textContent = '';
+  
+    if (!name || !email || !password || !role) {
+      errorElement.textContent = 'Todos os campos são obrigatórios.';
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${apiUrl}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role }),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        errorElement.textContent = errorText;
+        return;
+      }
+  
+      successElement.textContent = 'Registro realizado com sucesso! Você pode fazer login agora.';
+    } catch (error) {
+      errorElement.textContent = 'Erro ao registrar. Tente novamente mais tarde.';
+      console.error('Erro no registro:', error);
+    }
+  }
+  
   
 
 // Carrega a lista de pacientes do médico
@@ -122,7 +167,6 @@ async function loadDoctors() {
 function selectPatient(patientId) {
   selectedPatientId = patientId;
   patientIdChat = patientId;
-  document.getElementById('document-section').style.display = 'block';
   //document.getElementById('chat-section').style.display = 'block';
   document.getElementById('chat-btn').style.display = 'flex';
   document.getElementById('btn-docs').style.display = 'flex';
@@ -133,7 +177,6 @@ function selectPatient(patientId) {
 function selectDoctor(doctorId) {
   selectedPatientId = userId; // Para o paciente, usa o próprio ID como referência
   doctorIdChat = doctorId;
-  document.getElementById('document-section').style.display = 'block';
   //document.getElementById('chat-section').style.display = 'block';
   document.getElementById('chat-btn').style.display = 'flex';
   document.getElementById('btn-docs').style.display = 'flex';
@@ -144,34 +187,46 @@ function selectDoctor(doctorId) {
 
 // Função para buscar documentos do paciente selecionado
 async function fetchDocuments() {
-    try {
-      const response = await fetch(`${apiUrl}/documents/${selectedPatientId}`, {
-        method: 'GET',
-        headers: { 
-          'Authorization': `Bearer ${token}`, 
-          'Content-Type': 'application/json'
-        }
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Erro: ${errorData.error}`);
+  try {
+    const response = await fetch(`${apiUrl}/documents/${selectedPatientId}`, {
+      method: 'GET',
+      headers: { 
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json'
       }
-  
-      const documents = await response.json();
-      const documentList = document.getElementById('document-list');
-      documentList.innerHTML = '';
-  
-      documents.forEach(doc => {
-        const listItem = document.createElement('li');
-        listItem.textContent = doc.file_name;
-        documentList.appendChild(listItem);
-      });
-    } catch (error) {
-      console.error('Erro ao buscar documentos:', error.message);
-      alert(error.message);
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Erro: ${errorData.error}`);
     }
+
+    const documents = await response.json();
+    const documentList = document.getElementById('document-list');
+    
+    // Não remover o botão de upload
+    const uploadButton = document.querySelector('#document-list .upload-button');
+    if (uploadButton) {
+      documentList.innerHTML = ''; // Limpa apenas os itens de documentos, mantendo o botão
+      documentList.appendChild(uploadButton); // Adiciona o botão de volta
+    }
+
+    // Adiciona os documentos à lista
+    documents.forEach(doc => {
+      const listItem = document.createElement('li');
+      listItem.textContent = doc.file_name;
+      documentList.appendChild(listItem);
+    });
+  } catch (error) {
+    console.error('Erro ao buscar documentos:', error.message);
+    alert(error.message);
   }
+}
+
+function uploadDeArquivo() {
+  document.getElementById('document-section').style.display = 'block';
+}
+
   
 
 // Função para fazer upload de documento para o paciente selecionado
@@ -268,13 +323,26 @@ function toggleChat() {
   function setupNavigation() {
     document.getElementById('nav-section').style.display = 'flex';
     document.getElementById('chat-btn').style.display = 'none';
-    document.getElementById('nav-botoes').style.display = 'flex';
+    document.getElementById('nav-botoes').style.display = 'none';
     
   }
 
   document.getElementById('chat-btn').style.display = 'none';
   document.getElementById('nav-botoes').style.display = 'none';
   document.getElementById('btn-docs').style.display = 'none';
+  document.getElementById('login-section').style.display = 'flex';
+  document.getElementById('register-section').style.display = 'none';
+
+  function showLogin() {
+    document.getElementById('login-section').style.display = 'flex';
+    document.getElementById('register-section').style.display = 'none';
+  }
+  
+  function showRegister() {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('register-section').style.display = 'flex';
+  }
+  
   
 
 

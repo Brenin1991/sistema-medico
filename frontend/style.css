@@ -1,31 +1,174 @@
+/* Reset padrão */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  background-color: #f4f6f9;
+  color: #333;
+  font-size: 16px;
+}
+
+nav {
+  background-color: #1976d2;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav .brand-logo {
+  font-size: 1.8rem;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+#nav-botoes {
+  background-color: #f4f6f9;
+  padding: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#nav-botoes ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#nav-botoes ul li {
+  display: inline-block;
+}
+
+#nav-botoes ul li a {
+  text-decoration: none;
+  color: #1976d2;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 30px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#nav-botoes ul li a:hover {
+  background-color: #1976d2;
+  color: white;
 }
 
 .container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.card-custom {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
 
-.tabs .tab a {
-  color: #007bff;
+h4 {
+  margin-bottom: 20px;
+  color: #1976d2;
+  text-align: center;
 }
 
-.tabs .tab a.active {
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
+.input-field {
+  margin: 15px 0;
+  position: relative;
 }
 
-.collection .collection-item {
-  border-radius: 5px;
+.input-field input,
+.input-field select {
+  width: 100%;
   padding: 10px;
-  margin: 5px 0;
-  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+  border-color: #1976d2;
+}
+
+label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  background-color: white;
+  padding: 0 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #1976d2;
+  color: white;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #1565c0;
+}
+
+.btn.green {
+  background-color: #4caf50;
+}
+
+.btn.green:hover {
+  background-color: #43a047;
+}
+
+.red-text {
+  color: #e53935;
+}
+
+.green-text {
+  color: #43a047;
+}
+
+.section {
+  margin: 20px 0;
+}
+
+.collection {
+  list-style: none;
+  padding: 0;
+}
+
+.collection li {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #chat-window {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
+  margin-bottom: 10px;
+}
+
+#chat-message {
+  width: calc(100% - 60px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 .fixed-action-btn {
@@ -33,3 +176,156 @@ body {
   bottom: 20px;
   right: 20px;
 }
+
+.fixed-action-btn .btn-floating {
+  background-color: #e53935;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fixed-action-btn .btn-floating:hover {
+  background-color: #d32f2f;
+}
+
+@media (max-width: 768px) {
+  #nav-botoes ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Layout geral */
+#dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.tab {
+  width: 250px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab section {
+  margin-bottom: 20px;
+}
+
+.tab h5 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#doctors-section, #patients-section {
+  display: none; /* Inicia oculto, pode ser controlado por JavaScript */
+}
+
+/* Estilo dos itens de lista da tab */
+.collection {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.collection li {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.collection li:hover {
+  background-color: #e0e0e0;
+}
+
+/* Área do conteúdo principal (doc-body) */
+.doc-body {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+/* Estilo dos documentos (cards) em grid */
+#document-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+#document-list li {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+#document-list li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+#document-list li .document-name {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+#document-list li .document-type {
+  font-size: 14px;
+  color: #777;
+}
+
+button {
+  margin-top: 20px;
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo para o item de lista */
+#document-list .collection-item {
+  margin-bottom: 10px;
+}
+
+#document-list button {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#document-list button:hover {
+  background-color: #0056b3;
+}
+
+
