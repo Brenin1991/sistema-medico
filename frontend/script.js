@@ -39,7 +39,7 @@ async function login() {
           document.getElementById('doctors-section').style.display = 'block';
           document.getElementById('btn-pacientes').style.display = 'none';
         }
-        document.getElementById('nav-botoes').style.display = 'flex';
+        document.getElementById('nav-botoes').style.display = 'none';
         // Após verificar o login com sucesso
         setupNavigation();
 
