@@ -3,9 +3,8 @@ let token = '';
 let userId = '';
 let userRole = '';
 let selectedPatientId = ''; // ID do paciente atualmente selecionado
+let selectedSalaId = '';
 
-let doctorIdChat = '';
-let patientIdChat = '';
 
 // Função de login
 async function login() {
@@ -26,23 +25,20 @@ async function login() {
         userRole = data.role; // Recebe o papel do usuário (médico ou paciente) do backend
   
         document.getElementById('login-section').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'flex';
   
         // Exibe seções com base no papel do usuário
         if (userRole === 'doctor') {
-          doctorIdChat = userId;
-          loadPatients(); // Carrega a lista de pacientes para o médico
-          document.getElementById('patients-section').style.display = 'block';
-          document.getElementById('btn-medicos').style.display = 'none';
+          loadSalasByDoctor();
+          document.getElementById('create-sala-button').style.display = 'flex';
+          fetchPacientes();
         } else if (userRole === 'patient') {
-            patientIdChat = userId;
-          loadDoctors(); // Carrega a lista de médicos para o paciente
-          document.getElementById('doctors-section').style.display = 'block';
-          document.getElementById('btn-pacientes').style.display = 'none';
+          loadSalasByPatient();
+          document.getElementById('create-sala-button').style.display = 'none';
+          document.getElementById('document-list').innerHTML = '';
         }
         document.getElementById('nav-botoes').style.display = 'none';
         // Após verificar o login com sucesso
-        setupNavigation();
-
       } else {
         document.getElementById('login-error').textContent = 'Login inválido';
       }
@@ -98,9 +94,9 @@ async function login() {
   
 
 // Carrega a lista de pacientes do médico
-async function loadPatients() {
+/*async function loadSalasByDoctor() {
   try {
-    const response = await fetch(`${apiUrl}/patients`, {
+    const response = await fetch(`${apiUrl}/patients/salas`, {
       method: 'GET',
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -128,12 +124,45 @@ async function loadPatients() {
     console.error('Erro ao carregar pacientes:', error);
     alert('Erro ao carregar a lista de pacientes.');
   }
+}*/
+
+async function loadSalasByDoctor() {
+  try {
+    const response = await fetch(`${apiUrl}/salas`, {
+      method: 'GET',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+    }
+
+    const salas = await response.json();
+    const salasList = document.getElementById('salasList');
+    salasList.innerHTML = '';
+
+    salas.forEach(sala => {
+      const listItem = document.createElement('li');
+      listItem.textContent = sala.sala_name;
+      const salaDescription = sala.sala_name + " (" + sala.patient_name + ")";
+      listItem.onclick = () => loadDocumentsFromSala(sala.id, sala.patient_id, salaDescription);
+      salasList.appendChild(listItem);
+    });
+
+    document.getElementById('sala-list-section').style.display = 'block';
+  } catch (error) {
+    console.error('Erro ao carregar salas:', error);
+    alert('Erro ao carregar a lista de salas.');
+  }
 }
 
-// Carrega a lista de médicos para o paciente
-async function loadDoctors() {
+// Carrega a lista de salas para o paciente
+async function loadSalasByPatient() {
   try {
-    const response = await fetch(`${apiUrl}/documents/doctors`, {
+    const response = await fetch(`${apiUrl}/salas/salasByPatient`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -145,50 +174,52 @@ async function loadDoctors() {
       throw new Error(`Erro: ${response.status} - ${response.statusText}`);
     }
 
-    const doctors = await response.json();
-    const doctorsList = document.getElementById('doctors-list');
-    doctorsList.innerHTML = '';
+    const salas = await response.json();
+    const salasList = document.getElementById('salasList');
+    salasList.innerHTML = '';
 
-    doctors.forEach(doctor => {
+    salas.forEach(sala => {
       const listItem = document.createElement('li');
-      listItem.textContent = doctor.name;
-      listItem.onclick = () => selectDoctor(doctor.id);
-      doctorsList.appendChild(listItem);
+      listItem.textContent = sala.sala_name;
+      //listItem.onclick = () => selectDoctor(doctor.id);
+      const salaDescription = sala.sala_name + " (" + sala.doctor_name + ")";
+      listItem.onclick = () => loadDocumentsFromSala(sala.id, sala.patient_id, salaDescription);
+      salasList.appendChild(listItem);
     });
 
-    document.getElementById('doctors-section').style.display = 'block';
+    document.getElementById('sala-list-section').style.display = 'block';
   } catch (error) {
-    console.error('Erro ao carregar médicos:', error);
-    alert('Erro ao carregar a lista de médicos.');
+    console.error('Erro ao carregar salas:', error);
+    alert('Erro ao carregar a lista de salas.');
   }
 }
 
-// Seleciona um paciente ou médico para visualizar documentos e chat
+function loadDocumentsFromSala(salaId, patientId, salaDescription) {
+  selectedPatientId = patientId;
+  selectedSalaId = salaId;
+  document.getElementById('btn-docs').style.display = 'flex';
+  document.getElementById('sala-list-name').innerHTML = salaDescription;
+  
+  fetchDocuments(selectedSalaId);
+}
+/*
 function selectPatient(patientId) {
   selectedPatientId = patientId;
-  patientIdChat = patientId;
-  //document.getElementById('chat-section').style.display = 'block';
-  document.getElementById('chat-btn').style.display = 'flex';
   document.getElementById('btn-docs').style.display = 'flex';
   fetchDocuments();
-  initializeChat(doctorIdChat, patientIdChat);
 }
 
 function selectDoctor(doctorId) {
-  selectedPatientId = userId; // Para o paciente, usa o próprio ID como referência
-  doctorIdChat = doctorId;
-  //document.getElementById('chat-section').style.display = 'block';
-  document.getElementById('chat-btn').style.display = 'flex';
+  selectedPatientId = userId;
   document.getElementById('btn-docs').style.display = 'flex';
   
   fetchDocuments();
-  initializeChat(doctorIdChat, patientIdChat);
-}
+}*/
 
 // Função para buscar documentos do paciente selecionado
-async function fetchDocuments() {
+async function fetchDocuments(salaId) {
   try {
-    const response = await fetch(`${apiUrl}/documents/${selectedPatientId}`, {
+    const response = await fetch(`${apiUrl}/documents/${salaId}`, {
       method: 'GET',
       headers: { 
         'Authorization': `Bearer ${token}`, 
@@ -206,9 +237,12 @@ async function fetchDocuments() {
     
     // Não remover o botão de upload
     const uploadButton = document.querySelector('#document-list .upload-button');
-    if (uploadButton) {
+    if (userRole === 'doctor') {
+      document.getElementById('upload-doc-button').style.display = 'flex';
       documentList.innerHTML = ''; // Limpa apenas os itens de documentos, mantendo o botão
       documentList.appendChild(uploadButton); // Adiciona o botão de volta
+    } else {
+      documentList.innerHTML = '';
     }
 
     // Adiciona os documentos à lista
@@ -216,6 +250,7 @@ async function fetchDocuments() {
       const listItem = document.createElement('li');
       listItem.textContent = doc.file_name;
       documentList.appendChild(listItem);
+      listItem.onclick = () => openPopUpDocumento(doc);
     });
   } catch (error) {
     console.error('Erro ao buscar documentos:', error.message);
@@ -224,7 +259,7 @@ async function fetchDocuments() {
 }
 
 function uploadDeArquivo() {
-  document.getElementById('document-section').style.display = 'block';
+  document.getElementById('document-section').style.display = 'flex';
 }
 
   
@@ -233,15 +268,18 @@ function uploadDeArquivo() {
 async function uploadDocument() {
   const fileInput = document.getElementById('file-upload');
   const file = fileInput.files[0];
+  const fileName = document.getElementById('file-name').value;
 
-  if (!file || !selectedPatientId) {
-    return alert('Selecione um arquivo e um paciente');
-  }
+  //if (!file || !selectedSalaId) {
+  //  return alert('Selecione um arquivo e um paciente');
+ // }
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('file_description', fileName);
   formData.append('doctor_id', userId);
   formData.append('patient_id', selectedPatientId);
+  formData.append('sala_id', selectedSalaId);
 
   try {
     const response = await fetch(`${apiUrl}/documents/upload`, {
@@ -257,60 +295,14 @@ async function uploadDocument() {
       throw new Error(errorData.error || 'Erro desconhecido');
     }
 
-    fetchDocuments();
+    fetchDocuments(selectedSalaId);
+    document.getElementById('file-name').value = '';
   } catch (error) {
     console.error('Erro ao enviar documento:', error.message);
     alert(error.message);
   }
 }
 
-// Inicializa o WebSocket para chat com o paciente selecionado
-let socket;
-
-function initializeChat(doctorId, patientId) {
-  // Conecta ao servidor
-  socket = io(apiUrl);
-
-  // Entra na sala específica do médico e paciente
-  socket.on('connect', () => {
-    socket.emit('joinRoom', { doctorId, patientId });
-    console.log(`Conectado à sala room-${doctorId}-${patientId}`);
-  });
-
-  // Recebe e exibe as mensagens
-  socket.on('receiveMessage', (data) => {
-    displayMessage('Outro', data.message);
-  });
-}
-
-// Função para enviar uma mensagem
-function sendMessage() {
-  const messageInput = document.getElementById('chat-message');
-  const message = messageInput.value;
-
-  if (message && socket) {
-    // Use valores consistentes de doctorId e patientId para garantir a sala correta
-    socket.emit('sendMessage', { doctorId: doctorIdChat , patientId: patientIdChat, message });
-    displayMessage('Você', message); // Exibe a mensagem no próprio cliente
-    messageInput.value = '';
-  }
-}
-
-// Função para exibir mensagens no chat
-function displayMessage(sender, message) {
-  const chatWindow = document.getElementById('chat-window');
-  const messageElement = document.createElement('p');
-  messageElement.textContent = `${sender}: ${message}`;
-  chatWindow.appendChild(messageElement);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-// Alterna a exibição do chat
-function toggleChat() {
-    const chatSection = document.getElementById('chat-section');
-    chatSection.style.display = chatSection.style.display === 'block' ? 'none' : 'block';
-  }
-  
   // Exibe a seção apropriada com base na navegação
   function showSection(sectionId) {
     const sections = ['doctors-section', 'patients-section', 'document-section'];
@@ -318,20 +310,12 @@ function toggleChat() {
       document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
     });
   }
-  
-  // Chama essa função após o login para mostrar a barra de navegação e o botão de chat
-  function setupNavigation() {
-    document.getElementById('nav-section').style.display = 'flex';
-    document.getElementById('chat-btn').style.display = 'none';
-    document.getElementById('nav-botoes').style.display = 'none';
-    
-  }
 
-  document.getElementById('chat-btn').style.display = 'none';
   document.getElementById('nav-botoes').style.display = 'none';
   document.getElementById('btn-docs').style.display = 'none';
   document.getElementById('login-section').style.display = 'flex';
   document.getElementById('register-section').style.display = 'none';
+  document.getElementById('upload-doc-button').style.display = 'none';
 
   function showLogin() {
     document.getElementById('login-section').style.display = 'flex';
@@ -342,9 +326,114 @@ function toggleChat() {
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('register-section').style.display = 'flex';
   }
+
+  function closePopUpCreateSala() {
+    document.getElementById('create-sala-section').style.display = 'none';
+  }
+
+  function openPopUpCreateSala() {
+    fetchPacientes();
+    document.getElementById('create-sala-section').style.display = 'flex';
+  }
+
+  function closePopUpUpload() {
+    document.getElementById('document-section').style.display = 'none';
+  }
+
+  function openPopUpUpload() {
+    document.getElementById('document-section').style.display = 'flex';
+  }
+
+  function closePopUpDocumento() {
+    document.getElementById('document-popup').style.display = 'none';
+  }
+
+  function openPopUpDocumento(doc) {
+    document.getElementById('doc-title-popup').textContent = doc.file_name;
+    document.getElementById('document-popup').style.display = 'flex';
+    const downloadBtn = document.getElementById('view-doc-btn');
+    downloadBtn.onclick = () => openDocument(doc.file_path);
+  }
+
+  function openDocument(path) {
+    window.location.href = `http://localhost:8080${path}`;
+  }
+
+  async function createSala() {
+    const name = document.getElementById('sala_name').value;
+    const patientId = document.getElementById('patients-list').value;
+
+    const errorElement = document.getElementById('create-sala-error');
+    const successElement = document.getElementById('create-sala-success');
+    errorElement.textContent = '';
+    successElement.textContent = '';
+    
+    if (!name || !patientId) {
+      errorElement.textContent = 'Todos os campos são obrigatórios.';
+      return;
+    }
   
+    try {
+      const response = await fetch(`${apiUrl}/salas/create`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, patientId}),
+      });
   
+      if (!response.ok) {
+        const errorText = await response.text();
+        errorElement.textContent = errorText;
+        return;
+      }
+  
+      successElement.textContent = '';
+      errorElement.textContent = '';
+      document.getElementById('sala_name').value = '';
+      closePopUpCreateSala();
+      loadSalasByDoctor(); 
+    } catch (error) {
+      errorElement.textContent = 'Erro ao criar a sala.';
+      console.error('Erro no registro:', error);
+    }
+  }
 
+  async function fetchPacientes() {
+    try {
+      const response = await fetch(`${apiUrl}/patients`, {
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+      }
 
+      console.log("foiiiiiiii");
+  
+      const pacientes = await response.json();
 
+      // Seleciona o dropdown
+      const select = document.getElementById('patients-list');
 
+      // Limpa as opções padrão
+      select.innerHTML = '<option value="" disabled selected>Escolha o paciente</option>';
+
+      // Adiciona cada paciente como uma opção
+      pacientes.forEach((paciente) => {
+        const option = document.createElement('option');
+        option.value = paciente.id; // ID do paciente
+        option.textContent = paciente.name; // Nome do paciente
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('Erro ao carregar salas:', error);
+      alert('Erro ao carregar a lista de salas.');
+    }
+  }

@@ -34,7 +34,7 @@
   </div>
 
   <!-- Login Section -->
-  <div id="login-section" class="container page">
+  <div id="login-section" class="page-float">
     <div class="card-custom">
       <h4 class="center-align">Login</h4>
       <div class="input-field">
@@ -55,7 +55,34 @@
     </div>
   </div>
 
-  <div id="register-section" class="container page" style="display: none">
+  <!-- Login Section -->
+  <div id="create-sala-section" class="page-float" style="display: none">
+    <div class="card-custom">
+      <h4 class="center-align">Criar sala</h4>
+      <div class="input-field">
+        <input type="text" id="sala_name" required />
+        <label for="sala_name">Nome da Sala</label>
+      </div>
+      <div class="input-field">
+        <select id="patients-list" required>
+          <option value="" disabled selected>Escolha o paciente</option>
+          <option value="doctor">Médico</option>
+          <option value="patient">Paciente</option>
+        </select>
+        <label for="patients-list">Paciente</label>
+      </div>
+      <button class="btn blue waves-effect waves-light" onclick="createSala()">
+        Criar Sala
+      </button>
+      <button class="btn green waves-effect waves-light" onclick="closePopUpCreateSala()">
+        Cancelar
+      </button>
+      <p id="create-sala-error" class="red-text"></p>
+      <p id="create-sala-success" class="green-text"></p>
+    </div>
+  </div>
+
+  <div id="register-section" class="page-float" style="display: none">
     <div class="card-custom">
       <h4 class="center-align">Registro</h4>
       <div class="input-field">
@@ -90,42 +117,62 @@
     </div>
   </div>
 
-  <div id="dashboard">
+  <div id="dashboard" style="display: none">
     <div class="tab">
-      <section id="doctors-section" class="container section" style="display: none">
-        <h5>Médicos Vinculados</h5>
-        <ul id="doctors-list" class="collection"></ul>
-      </section>
-
-      <!-- Patients List for Doctors -->
-      <section id="patients-section" class="container section" style="display: none">
-        <h5>Pacientes</h5>
-        <ul id="patients-list" class="collection"></ul>
+      <section id="sala-list-section" class="container section" style="display: none">
+        <h5>Salas virtuais</h5>
+        <ul id="salasList" class="collection"></ul>
+        <button id="create-sala-button" class="btn blue waves-effect waves-light" onclick="openPopUpCreateSala()">
+          Criar Sala
+        </button>
       </section>
     </div>
     <!-- Doctors List for Patients -->
     <div class="doc-body">
       <!-- Document Upload Section for Doctors or Document View for Patients -->
-      <section id="document-section" class="container section" style="display: none">
-        <h5>Documentos do Paciente</h5>
+      <section id="document-section" class="page-float" style="display: none">
+        <div class="card-custom">
+          <h5>Documentos do Paciente</h5>
         <div class="file-field input-field">
           <div class="btn blue">
             <span>Escolher arquivo</span>
             <input type="file" id="file-upload" />
           </div>
-          <div class="file-path-wrapper">
-            <input class="file-path validate" type="text" />
+          <div class="input-field">
+            <input id="file-name" class="file-path validate" type="text" />
+            <label for="file-name">Descrição</label>
           </div>
         </div>
         <button class="btn blue waves-effect waves-light" onclick="uploadDocument()">
           Enviar Documento
         </button>
+        <button class="btn green waves-effect waves-light" onclick="closePopUpUpload()">
+          Cancelar
+        </button>
+        </div>
       </section>
+      <!-- Document Upload Section for Doctors or Document View for Patients -->
+       <selection id="document-popup" class="page-float" style="display: none">
+        <div class="card-custom">
+          <h2 id="doc-title-popup">Documentos do Paciente</h2>
+          <button id="view-doc-btn" class="btn blue waves-effect waves-light" >
+            Visualizar Documento
+          </button>
+          <button class="btn green waves-effect waves-light" onclick="closePopUpUpload()">
+            Excluir Documento
+          </button>
+          <button class="btn green waves-effect waves-light" onclick="closePopUpDocumento()">
+            Cancelar
+          </button>
+        </div>
+       </selection>
       <section>
+        <h2 id="sala-list-name">Nome da sala</h2>
         <ul id="document-list" class="collection">
+          
           <!-- Item de lista para o botão de upload -->
           <li class="collection-item upload-button">
-            <button class="btn blue waves-effect waves-light" onclick="uploadDeArquivo()">
+            <button id="upload-doc-button" class="btn blue waves-effect waves-light" onclick="openPopUpUpload()">
               Enviar Novo Documento
             </button>
           </li>
@@ -133,26 +180,9 @@
         
       </section>
     </div>
+    
   </div>
-  <!-- Chat Section -->
-  <div id="chat-section" class="container section" style="display: none">
-    <h5>Chat</h5>
-    <div id="chat-window" class="card-panel grey lighten-4" style="height: 300px; overflow-y: scroll"></div>
-    <div class="input-field">
-      <input type="text" id="chat-message" placeholder="Escreva uma mensagem" />
-      <button class="btn-floating btn-large blue" onclick="sendMessage()">
-        <i class="material-icons">send</i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Botão Flutuante para abrir o chat -->
-  <div id="chat-btn" class="fixed-action-btn">
-    <a class="btn-floating btn-large red" onclick="toggleChat()">
-      <i class="large material-icons">chat</i>
-    </a>
-  </div>
-  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  
   <script src="script.js"></script>
 </body>
 </html>

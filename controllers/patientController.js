@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 exports.getPatients = (req, res) => {
-  console.log("entrou lista");
+  console.log("lista de pacientes");
   // Verifique se o usuário autenticado é um médico
   if (req.user.role !== 'doctor') {
     return res.status(403).send('Acesso negado. Apenas médicos podem acessar essa rota.');
@@ -10,7 +10,7 @@ exports.getPatients = (req, res) => {
   const doctorId = req.user.id; // ID do médico autenticado
   console.log(doctorId);
   // Busca todos os pacientes associados ao médico
-  db.all(`SELECT * FROM users WHERE role = 'patient' AND doctor_id = ?`, [doctorId], (err, rows) => {
+  db.all(`SELECT * FROM users WHERE role = 'patient'`, (err, rows) => {
     if (err) {
       return res.status(500).send('Erro ao buscar pacientes');
     }

@@ -21,11 +21,7 @@ const upload = multer({ storage: storage });
 // Rota para upload de documentos
 router.post('/upload', authMiddleware, upload.single('file'), documentController.uploadDocument);
 
-// Rota para listar médicos vinculados ao paciente
-router.get('/doctors', authMiddleware, documentController.getDoctorsByPatient);
-
-
-router.get('/:patientId', authMiddleware, documentController.getDocumentsByPatient);
+router.get('/:salaId', authMiddleware, documentController.getDocumentsBySala);
 
 
 module.exports = router;
