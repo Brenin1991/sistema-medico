@@ -35,6 +35,7 @@ async function login() {
         } else if (userRole === 'patient') {
           loadSalasByPatient();
           document.getElementById('create-sala-button').style.display = 'none';
+          document.getElementById('delete-doc-btn').style.display = 'none';
           document.getElementById('document-list').innerHTML = '';
         }
         document.getElementById('nav-botoes').style.display = 'none';
@@ -353,11 +354,38 @@ async function uploadDocument() {
     document.getElementById('document-popup').style.display = 'flex';
     const downloadBtn = document.getElementById('view-doc-btn');
     downloadBtn.onclick = () => openDocument(doc.file_path);
+
+    const deleteBtn = document.getElementById('delete-doc-btn');
+    deleteBtn.onclick = () => deleteDocument(doc.id);
   }
 
   function openDocument(path) {
-    window.location.href = `http://localhost:8080${path}`;
+    window.open(`http://localhost:3000${path}`, '_blank');
   }
+
+  async function deleteDocument(documentId) {
+    try {
+      const response = await fetch(`${apiUrl}/documents/${documentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro desconhecido');
+      }
+  
+      alert('Documento deletado com sucesso!');
+      closePopUpDocumento();
+      fetchDocuments(selectedSalaId); // Atualiza a lista de documentos após sucesso na exclusão
+    } catch (error) {
+      console.error('Erro ao deletar documento:', error.message);
+      alert(error.message);
+    }
+  }
+  
 
   async function createSala() {
     const name = document.getElementById('sala_name').value;

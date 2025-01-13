@@ -23,5 +23,7 @@ router.post('/upload', authMiddleware, upload.single('file'), documentController
 
 router.get('/:salaId', authMiddleware, documentController.getDocumentsBySala);
 
+router.delete('/:documentId', authMiddleware, documentController.deleteDocument);
+
 
 module.exports = router;

@@ -7,7 +7,7 @@ const cors = require('cors'); // Importa o CORS
 // Configuração de CORS para requisições HTTP
 app.use(cors({
   origin: "*", // Permite todas as origens
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "DELETE"],
   credentials: true
 }));
 

@@ -44,6 +44,21 @@ exports.uploadDocument = (req, res) => {
   });
 };
 
+exports.deleteDocument = (req, res) => {
+  const documentId = req.params.documentId; // ID do documento a ser deletado
+
+  // Primeiro, busque o documento para garantir que ele exista
+  db.get('SELECT * FROM documents WHERE id = ?', [documentId], (err, row) => {
+    if (err) return res.status(500).json({ error: 'Erro ao verificar o documento' });
+    if (!row) return res.status(404).json({ error: 'Documento não encontrado' });
+
+    // Agora, deletamos o documento
+    db.run('DELETE FROM documents WHERE id = ?', [documentId], function(err) {
+      if (err) return res.status(500).json({ error: 'Erro ao deletar o documento' });
+      res.status(200).json({ message: 'Documento deletado com sucesso' });
+    });
+  });
+};
 
 
 
