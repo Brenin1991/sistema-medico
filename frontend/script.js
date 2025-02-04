@@ -35,8 +35,8 @@ async function login() {
         } else if (userRole === 'patient') {
           loadSalasByPatient();
           document.getElementById('create-sala-button').style.display = 'none';
-          document.getElementById('delete-doc-btn').style.display = 'none';
-          document.getElementById('document-list').innerHTML = '';
+          //document.getElementById('delete-doc-btn').style.display = 'none';
+          //document.getElementById('document-list').innerHTML = '';
         }
         document.getElementById('nav-botoes').style.display = 'none';
         // Após verificar o login com sucesso
@@ -243,7 +243,9 @@ async function fetchDocuments(salaId) {
       documentList.innerHTML = ''; // Limpa apenas os itens de documentos, mantendo o botão
       documentList.appendChild(uploadButton); // Adiciona o botão de volta
     } else {
-      documentList.innerHTML = '';
+      document.getElementById('upload-doc-button').style.display = 'flex';
+      documentList.innerHTML = ''; // Limpa apenas os itens de documentos, mantendo o botão
+      documentList.appendChild(uploadButton); // Adiciona o botão de volta
     }
 
     // Adiciona os documentos à lista
